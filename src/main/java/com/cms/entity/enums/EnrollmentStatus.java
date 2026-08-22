@@ -1,4 +1,7 @@
 package com.cms.entity.enums;
 
-public class EnrollmentStatus {
+public enum EnrollmentStatus {
+    ENROLLED,
+    COMPLETED,
+    CANCELLED
 }

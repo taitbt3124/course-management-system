@@ -1,4 +1,4 @@
-package com.cms.services;
+package com.cms.services.impl;
 
 import com.cms.entity.User;
 import com.cms.entity.enums.Role;
@@ -12,6 +12,8 @@ import com.cms.models.dtos.responses.UserResponse;
 import com.cms.models.dtos.responses.VerifyTokenResponse;
 import com.cms.repositories.UserRepository;
 import com.cms.security.jwt.JwtTokenProvider;
+import com.cms.security.jwt.TokenBlacklistService;
+import com.cms.services.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,6 +31,8 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider tokenProvider;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     public UserResponse register(RegisterRequest registerRequest) {
@@ -167,4 +171,19 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+    @Override
+    public void logout(String bearerToken) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            String jwt = bearerToken.substring(7);
+
+            // 1. Lấy thời gian hết hạn còn lại của Token
+            long expirationTimeMs = jwtTokenProvider.getRemainingExpirationMs(jwt);
+
+            // 2. Đưa Token vào Blacklist
+            tokenBlacklistService.blacklistToken(jwt, expirationTimeMs);
+
+            // 3. Xóa SecurityContext của request hiện tại
+            SecurityContextHolder.clearContext();
+        }
+    }
 }

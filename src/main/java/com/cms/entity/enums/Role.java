@@ -1,4 +1,7 @@
 package com.cms.entity.enums;
 
-public class Role {
+public enum Role {
+    ADMIN,
+    TEACHER,
+    STUDENT
 }

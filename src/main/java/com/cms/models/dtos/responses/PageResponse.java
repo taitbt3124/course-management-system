@@ -1,4 +1,4 @@
-package com.cms.dtos.responses;
+package com.cms.models.dtos.responses;
 
 public class PageResponse {
 }

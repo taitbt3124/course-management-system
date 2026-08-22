@@ -1,4 +1,7 @@
 package com.cms.entity.enums;
 
-public class CourseStatus {
+public enum CourseStatus {
+    DRAFT,
+    PUBLISHED,
+    ARCHIVED
 }
